@@ -6,6 +6,7 @@ import schema from './data/schema';
 import keys from './config/keys';
 import { Author } from './data/models/author.model';
 import { Post } from './data/models/post.model';
+import { User } from "./data/models/user.model";
 
 mongoose.connect(keys.mongoURI);
 
@@ -18,6 +19,8 @@ app.use('/graphql', bodyParser.json(), graphqlExpress({
   context: {
     Author,
     Post,
+    User,
+    SECRET: keys.logInSecret
   } 
 }));
 

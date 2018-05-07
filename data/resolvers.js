@@ -1,3 +1,7 @@
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import _ from 'lodash';
+
 const resolvers = {
   Query: {
     author: async (root, args, { Author }) => {
@@ -32,50 +36,55 @@ const resolvers = {
           const author = await new Author(args).save();
 
           args.posts.map(async pid => {
-            const post = await Post.findById({ _id: pid });
+            //console.log(pid);
+            const post = await Post.findOne({ _id: pid });
+            //console.log(post);
             post.set({ author: author._id }).save();
           });
 
           author._id = author._id.toString();
           return author;
         }
+      } else {
+          const author = await new Author(args).save();
+          author._id = author._id.toString();
+          return author;
       }
-
-      const author = await new Author(args).save();
-      author._id = author._id.toString();
-      return author;
-      //   Author.create(args, (error, author) => {
-      //     if (error) {
-      //       console.log(error);
-      //     }
-
-      //     if (args.posts.length > 0) {
-      //       args.posts.map(pid => {
-      //         Post.findById({ _id: pid }, (error, post) => {
-      //           if (error) {
-      //             console.log(error);
-      //           }
-
-      //           post.set({ author: author._id });
-      //           post.save((error, updatedPost) => {
-      //               if (error) {
-      //                   console.log(error)
-      //               }
-
-      //               return updatedPost
-      //           })
-      //         });
-      //       });
-      //     }
-
-      //     // author._id = author._id.toString();
-      //     return author;
-      //   });
     },
     createPost: async (parent, args, { Post }) => {
       const post = await new Post(args).save();
       post._id = post._id.toString();
       return post;
+    },
+    signUp: async (parent, args, { User }) => {
+      
+      args.password = await bcrypt.hash(args.password, 12);
+      const user = await new User(args).save();
+      user._id = user._id.toString();
+      return user;
+    },
+    login: async (parent, {email, password}, {User, SECRET}) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error('User not found!')
+      }
+
+      const valid = await bcrypt.compare(password, user.password);
+      if(!valid) {
+        throw new Error ('Password does not match!');
+      }
+
+      const token = jwt.sign(
+        {
+          user: _.pick(user, ['_id', 'email', 'name'])
+        },
+        SECRET,
+        {
+          expiresIn: '1y'
+        }
+      );
+
+      return token;
     }
   },
   Author: {
@@ -91,8 +100,10 @@ const resolvers = {
   },
   Post: {
     author(post, _, { Author }) {
-      const author = Author.findById({ _id: post.author });
-      return author;
+      if(post.author) {
+        const author = Author.findById({ _id: post.author });
+        return author;
+      }
     }
   }
 };

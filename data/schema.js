@@ -11,6 +11,12 @@ type Query {
 type Mutation {
   createAuthor(firstName: String!, lastName: String, posts: [String]): Author
   createPost(title: String!, text: String, views: Int, author: String): Post
+  signUp(email: String!, name: String, password: String!): User!
+  login(email: String!, password: String!): String!
+}
+
+type Token {
+  token: String
 }
 
 type Author {
@@ -25,6 +31,13 @@ type Post {
   text: String
   views: Int
   author: Author
+}
+type User {
+  _id: String
+  name: String!
+  email: String!
+  createdAt: String!
+  updatedAt: String!
 }
 `;
 
