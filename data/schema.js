@@ -7,12 +7,17 @@ type Query {
   post(_id: String!): Post
   allAuthors: [Author]!
   allPosts: [Post]!
+  user: User
 }
 type Mutation {
   createAuthor(firstName: String!, lastName: String, posts: [String]): Author
   createPost(title: String!, text: String, views: Int, author: String): Post
   signUp(email: String!, name: String, password: String!): User!
   login(email: String!, password: String!): String!
+}
+
+type Subscription {
+  postCreated: Post!
 }
 
 type Token {
@@ -38,6 +43,12 @@ type User {
   email: String!
   createdAt: String!
   updatedAt: String!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
 }
 `;
 
