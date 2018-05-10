@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import _ from "lodash";
 import { PubSub } from "graphql-subscriptions";
+import AWS from 'aws-sdk';
+import { withFilter } from "graphql-subscriptions";
 
 export const pubsub = new PubSub();
 
@@ -10,6 +12,9 @@ const POST_CREATED = "POST_CREATED";
 const resolvers = {
   Subscription: {
     postCreated: {
+      // subscribe: withFilter(() => pubsub.asyncIterator(POST_CREATED), (payload, variables) => {
+      //   return payload.createdPost.title === variables.title;
+      // })
       subscribe: () => pubsub.asyncIterator(POST_CREATED)
     }
   },
@@ -48,6 +53,38 @@ const resolvers = {
     }
   },
   Mutation: {
+    signS3: async (parent, { filename, filetype }) => {
+      const s3 = new AWS.S3({
+        signatureVersion: "v4",
+        region: "us-east-1",
+        accessKeyId: process.env.S3_ACCESS_KEY,
+        secretAccessKey: process.env.S3_SECRET_KEY
+      });
+
+      const s3Params = {
+        Bucket: process.env.S3_BUCKET,
+        Key: filename,
+        Expires: 60,
+        ContentType: filetype,
+        ACL: "public-read"
+      };
+
+      const signedRequest = await s3.getSignedUrl("putObject", s3Params);
+      const url = `https://${
+        process.env.S3_BUCKET
+      }.s3.amazonaws.com/${filename}`;
+
+      return {
+        signedRequest,
+        url
+      };
+    },
+    createPicture: async (parent, args, { Picture }) => {
+      const picture = await new Picture(args).save();
+      picture._id = picture._id.toString();
+      console.log(picture);
+      return picture;
+    },
     createAuthor: async (parent, args, { Author, Post }) => {
       if (args.posts) {
         if (args.posts.length > 0) {
@@ -73,9 +110,7 @@ const resolvers = {
       const post = await new Post(args).save();
       post._id = post._id.toString();
 
-      pubsub.publish(POST_CREATED, {
-        post
-      });
+      pubsub.publish(POST_CREATED, { postCreated: post });
       console.log(post);
       return post;
     },
@@ -106,7 +141,7 @@ const resolvers = {
         }
       );
 
-      return token;
+      return { token };
     }
   },
   Author: {

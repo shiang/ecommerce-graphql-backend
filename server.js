@@ -7,14 +7,17 @@ import keys from './config/keys';
 import { Author } from './data/models/author.model';
 import { Post } from './data/models/post.model';
 import { User } from "./data/models/user.model";
+import { Picture } from "./data/models/picture.model";
 import jwt from 'jsonwebtoken';
 import { logInSecret } from './config/keys';
 import cors from 'cors';
 import { createServer } from "http";
 import { execute, subscribe } from "graphql";
 import { SubscriptionServer } from "subscriptions-transport-ws";
+require("dotenv").config();
 
-mongoose.connect(keys.mongoURI);
+//mongoose.connect(keys.mongoURI);
+mongoose.connect(process.env.MONGO_URI)
 
 // Initialize the app
 const app = express();
@@ -22,7 +25,7 @@ const app = express();
 const addUser = async(req, res) => {
   const token = req.header.authorization;
   try {
-    const user = await jwt.verify(token, logInSecret);
+    const user = await jwt.verify(token, process.env.LOGIN_SECRET);
     req.user = user
   } catch(err) {
     console.log(err);
@@ -40,7 +43,8 @@ app.use('/graphql', bodyParser.json(), graphqlExpress(req => ({
     Author,
     Post,
     User,
-    SECRET: keys.logInSecret,
+    Picture,
+    SECRET: process.env.LOGIN_SECRET,
     user: req.user
   } 
 })));
@@ -50,14 +54,14 @@ app.use(
   "/graphiql",
   graphiqlExpress({
     endpointURL: "/graphql",
-    subscriptionsEndpoint: "ws://localhost:3000/subscriptions"
+    subscriptionsEndpoint: "ws://localhost:4000/subscriptions"
   })
 );
 
 const server = createServer(app);
 
-server.listen(3000, () => {
-  console.log("Go to http://localhost:3000/graphiql to run queries!");
+server.listen(4000, () => {
+  console.log("Go to http://localhost:4000/graphiql to run queries!");
   new SubscriptionServer({
     execute,
     subscribe,
