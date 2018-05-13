@@ -4,10 +4,13 @@ import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import mongoose from 'mongoose';
 import schema from './data/schema';
 import keys from './config/keys';
-import { Author } from './data/models/author.model';
-import { Post } from './data/models/post.model';
 import { User } from "./data/models/user.model";
 import { Picture } from "./data/models/picture.model";
+import { Product } from "./data/models/product.model";
+import { Customer } from "./data/models/customer.model";
+import { Vendor } from "./data/models/vendor.model";
+import { Order } from "./data/models/order.model";
+import { OrderInfo } from "./data/models/orderInfo.model";
 import jwt from 'jsonwebtoken';
 import { logInSecret } from './config/keys';
 import cors from 'cors';
@@ -40,10 +43,13 @@ app.use(addUser);
 app.use('/graphql', bodyParser.json(), graphqlExpress(req => ({ 
   schema,
   context: {
-    Author,
-    Post,
     User,
     Picture,
+    Product,
+    Customer,
+    Vendor,
+    Order,
+    OrderInfo,
     SECRET: process.env.LOGIN_SECRET,
     user: req.user
   } 

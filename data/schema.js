@@ -3,33 +3,58 @@ import resolvers from "./resolvers";
 
 const typeDefs = `
 type Query {
-  author(_id: String!): Author
-  post(_id: String!): Post
-  allAuthors: [Author]!
-  allPosts: [Post]!
+  picture(_id: String!): Picture
+  product(_id: String!): Product!
+  order(_id: String!): Order!
+  customer(_id: String!): Customer!
+  vendor(_id: String!): Vendor!
+  orderInfo(_id: String!): OrderInfo!
   user: User
-  getPicture(_id: String!): Picture
+  allProducts: [Product!]
+  allOrders: [Order!]
+  allCustomers: [Customer!]
+  allOrderInfoes: [OrderInfo!]
+  allVendors: [Vendor!]
 }
 type Mutation {
-  createAuthor(firstName: String!, lastName: String, posts: [String]): Author
-  createPost(title: String!, text: String, views: Int, author: String): Post
   signUp(email: String!, name: String, password: String!): User!
   login(email: String!, password: String!): AuthPayload!
   signS3(filename: String!, filetype: String!): S3Payload!
   createPicture(name: String!, pictureUrl: String!): Picture!
+  updatePicture(_id: String!, name: String!, pictureUrl: String!): Picture!
+  removePicture(_id: String!): Picture!
+  createProduct(productInput: ProductInput): Product!
+  updateProduct(_id: String!, productInput: ProductInput): Product!
+  removeProduct(_id: String!): Product!
+  createOrder(orderInput: OrderInput!): Order!
+  updateOrder(_id: String!, OrderInput: OrderInput!): Order!
+  removeOrder(_id: String!): Order!
+  createOrderInfo(orderInfoInput: OrderInfoInput!): OrderInfo!
+  updateOrderInfo(_id: String!, OrderInfoInput: OrderInfoInput!): OrderInfo!
+  removeOrderInfo(_id: String!): OrderInfo!
+  createVendor(vendorInput: VendorInput!): Vendor!
+  updateVendor(_id: String!, vendorInput: VendorInput!): Vendor!
+  removeVendor(_id: String!): Vendor!
+  createCustomer(customerInput: CustomerInput!): Customer!
+  updateCustomer(_id: String!, customerInput: CustomerInput!): Customer!
+  removeCustomer(_id: String!): Customer!
 }
 
 type Subscription {
-  postCreated: Post
+  productCreated: Product
 }
 
 type AuthPayload {
   token: String!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type S3Payload {
   signedRequest: String!
   url: String!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Picture {
@@ -44,11 +69,23 @@ type Product {
   _id: String
   name: String!
   description: String
-  price: Float
+  price: Float!
   tags: [String!]
-  type: String
+  category: String!
   images: [Picture]
   vendor: Vendor
+  createdAt: String!
+  updatedAt: String!
+}
+
+input ProductInput {
+  name: String!
+  description: String
+  price: Float!
+  tags: [String!]
+  category: String!
+  images: [String]
+  vendor: String
 }
 
 type Vendor {
@@ -60,6 +97,18 @@ type Vendor {
   pictures: [Picture]
   products: [Product]
   orders: [Order]
+  createdAt: String!
+  updatedAt: String!
+}
+
+input VendorInput {
+  name: String
+  description: String
+  address: String
+  phone: String
+  pictures: [String!]
+  products: [String!]
+  orders: [String!]
 }
 
 type Customer {
@@ -70,6 +119,17 @@ type Customer {
   mobileVerified: Boolean
   profilePicture: Picture
   orders: [Order]
+  createdAt: String!
+  updatedAt: String!
+}
+
+input CustomerInput {
+  name: String
+  email: String
+  mobile: String
+  mobileVerified: Boolean
+  profilePicture: String
+  orders: [String!]
 }
 
 type Order {
@@ -79,15 +139,33 @@ type Order {
   total: Float
   orderedItems: [OrderInfo]
   orderStatus: OrderStatus
+  createdAt: String!
+  updatedAt: String!
+}
+
+input OrderInput {
+  vendor: String!
+  customer: String!
+  total: Float!
+  orderedItems: [String!]!
+  orderStatus: String!
 }
 
 type OrderInfo {
-  _id: String
-  orderedFrom: Vendor
-  orderedBy: Customer
-  product: Product
-  quantity: Int
+  _id: String!
+  orderedFrom: Vendor!
+  orderedBy: Customer!
+  product: Product!
+  quantity: Int!
+  createdAt: String!
+  updatedAt: String!
+}
 
+input OrderInfoInput {
+  orderedFrom: String!
+  orderedBy: String!
+  product: String!
+  quantity: Int!
 }
 
 enum OrderStatus {
@@ -100,25 +178,6 @@ enum OrderStatus {
   ReadyForPickup
   NewOrder
   IsConfirming
-}
-
-type Author {
-  _id: String
-  firstName: String
-  lastName: String
-  posts: [Post]
-  createdAt: String!
-  updatedAt: String!
-}
-
-type Post {
-  _id: String
-  title: String
-  text: String
-  views: Int
-  author: Author
-  createdAt: String!
-  updatedAt: String!
 }
 
 type User {

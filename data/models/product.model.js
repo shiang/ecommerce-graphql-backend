@@ -6,7 +6,7 @@ export const productSchema = new mongoose.Schema(
     description: { type: String },
     price: { type: Number, required: [true, "A product must have a price"] },
     tags: [{ type: String }],
-    type: { type: String },
+    category: { type: String, required: [true, "You must supply a category to a product"] },
     images: [
       {
         type: mongoose.Schema.Types.ObjectId,
