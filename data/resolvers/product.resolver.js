@@ -1,3 +1,6 @@
+import { productIndex } from "../algolia";
+import { pubsub, PRODUCT_CREATED } from '../resolvers';
+
 export default {
   Query: {
     product: async (parent, args, { Product }) => {
@@ -17,14 +20,38 @@ export default {
       const product = await new Product(productInput).save();
       product._id = product._id.toString();
       pubsub.publish(PRODUCT_CREATED, { productCreated: product });
+      const productObj = {
+        product,
+        objectID: product._id
+      }
+      productIndex.addObject(productObj, (err, content) => {
+        if(err) {
+          console.log(err)
+        }
+
+        console.log(content);
+      })
       return product;
     },
-    updateProduct: async (parent, { productInput }, { Product }) => {
+    updateProduct: async (parent, args, { Product }) => {
       const product = await Product.findOneAndUpdate(
         { _id: args._id },
-        productInput,
+        args.productInput,
         { new: true }
       );
+
+      const productObj = {
+        product,
+        objectID: product._id
+      };
+
+      productIndex.saveObject(productObj, (err, content) => {
+        if(err) {
+          console.log(err)
+        }
+
+        console.log(content);
+      })
       console.log(product);
       return product;
     },

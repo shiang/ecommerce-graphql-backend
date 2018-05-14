@@ -12,9 +12,10 @@ import vendorResolver from './resolvers/vendor.resolver';
 import orderInfoResolver from './resolvers/orderInfo.resolver';
 import pictureResolver from './resolvers/picture.resolver';
 
+
 export const pubsub = new PubSub();
 
-const PRODUCT_CREATED = "PRODUCT_CREATED";
+export const PRODUCT_CREATED = "PRODUCT_CREATED";
 
 const rootResolver = {
   Subscription: {

@@ -15,7 +15,22 @@ type Query {
   allCustomers: [Customer!]
   allOrderInfoes: [OrderInfo!]
   allVendors: [Vendor!]
+  searchProductsAlgolia(
+      query: String,
+      page: Int,
+      hitsPerPage: Int,
+      filters: String,
+      minWordSizefor1Type: Int,
+      minWordSizefor2Types: Int,
+      aroundLatLng: String,
+      aroundRadius: Int,
+      aroundPrecision: Int,
+      minimumAroundRadius: Int,
+      insideBoundingBox: [Float]
+      insidePolygon: [Float]
+  ): SearchProductsAlgoliaPayload
 }
+
 type Mutation {
   signUp(email: String!, name: String, password: String!): User!
   login(email: String!, password: String!): AuthPayload!
@@ -86,6 +101,17 @@ input ProductInput {
   category: String!
   images: [String]
   vendor: String
+}
+
+type SearchProductsAlgoliaPayload {
+   hits: [String],
+   page: Int,
+   nbHits: Int,
+   nbPages: Int,
+   hitPerPage: Int,
+   processingTimeMS: Int,
+   query: String,
+   params: String
 }
 
 type Vendor {
