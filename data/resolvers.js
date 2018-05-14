@@ -4,12 +4,19 @@ import _ from "lodash";
 import { PubSub } from "graphql-subscriptions";
 import AWS from 'aws-sdk';
 import { withFilter } from "graphql-subscriptions";
+import { merge } from 'lodash';
+import productResolver from './resolvers/product.resolver';
+import orderResolver from './resolvers/order.resolver';
+import customerResolver from './resolvers/customer.resolver';
+import vendorResolver from './resolvers/vendor.resolver';
+import orderInfoResolver from './resolvers/orderInfo.resolver';
+import pictureResolver from './resolvers/picture.resolver';
 
 export const pubsub = new PubSub();
 
 const PRODUCT_CREATED = "PRODUCT_CREATED";
 
-const resolvers = {
+const rootResolver = {
   Subscription: {
     productCreated: {
       // subscribe: withFilter(() => pubsub.asyncIterator(POST_CREATED), (payload, variables) => {
@@ -27,61 +34,6 @@ const resolvers = {
 
       return null;
     },
-    product: async (parent, args, { Product }) => {
-      const product = await Product.findOne({ _id: args._id });
-      return product;
-    },
-    allProducts: async (parent, args, { Product }) => {
-      const products = await Product.find();
-      return products.map(product => {
-        product._id = product._id.toString();
-        return product;
-      });
-    },
-    order: async (parent, args, { Order }) => {
-      const order = await Order.findOne({ _id: args._id });
-      return order;
-    },
-    allOrders: async (parent, args, { Order }) => {
-      const orders = await Order.find();
-      return orders.map(order => {
-        order._id = order._id.toString();
-        return order;
-      });
-    },
-    orderInfo: async (parent, args, { OrderInfo }) => {
-      const orderInfo = await OrderInfo.findOne({ _id: args._id });
-      return orderInfo;
-    },
-    allOrderInfoes: async (parent, args, { OrderInfo }) => {
-      const orderInfoes = await OrderInfo.find();
-      return orderInfoes.map(orderInfo => {
-        orderInfo._id = orderInfo._id.toString();
-        return orderInfo;
-      });
-    },
-    customer: async (parent, args, { Customer }) => {
-      const customer = await Customer.findOne({ _id: args._id });
-      return customer;
-    },
-    allCustomers: async (parent, args, { Customer }) => {
-      const customers = await Customer.find();
-      return customers.map(customer => {
-        customer._id = customer._id.toString();
-        return customer;
-      });
-    },
-    vendor: async (parent, args, { Vendor }) => {
-      const vendor = await Vendor.findOne({ _id: args._id });
-      return vendor;
-    },
-    allVendors: async (parent, args, { Vendor }) => {
-      const vendors = await Vendor.find();
-      return vendors.map(vendor => {
-        vendor._id = vendor._id.toString();
-        return vendor;
-      });
-    }
   },
   Mutation: {
     signS3: async (parent, { filename, filetype }) => {
@@ -109,122 +61,6 @@ const resolvers = {
         signedRequest,
         url
       };
-    },
-    createProduct: async (parent, args, { Product }) => {
-      const product = await new Product(args).save();
-      product._id = product._id.toString();
-      pubsub.publish(PRODUCT_CREATED, { productCreated: product });
-      return product;
-    },
-    updateProduct: async (parent, args, { Product }) => {
-      const product = await Product.findOneAndUpdate(
-        { _id: args._id },
-        args.productInput,
-        { new: true }
-      );
-      console.log(product);
-      return product;
-    },
-    removeProduct: async (parent, args, { Product }) => {
-      const product = await Product.findByIdAndRemove({ _id: args._id });
-
-      return product;
-    },
-    createPicture: async (parent, args, { Picture }) => {
-      const picture = await new Picture(args).save();
-      picture._id = picture._id.toString();
-
-      return picture;
-    },
-    updatePicture: async (parent, args, { Picture }) => {
-      const picture = await Picture.findOneAndUpdate(
-        { _id: args._id },
-        args.customerInput,
-        { new: true }
-      );
-
-      return picture;
-    },
-    removePicture: async (parent, args, { Picture }) => {
-      const picture = await Customer.findByIdAndRemove({ _id: args._id });
-
-      return picture;
-    },
-    createCustomer: async (parent, args, { Customer }) => {
-      const customer = await new Customer(args).save();
-      customer._id = customer._id.toString();
-      return customer;
-    },
-    updateCustomer: async (parent, args, { Customer }) => {
-      const customer = await Customer.findOneAndUpdate(
-        { _id: args._id },
-        args.customerInput,
-        { new: true }
-      );
-
-      return customer;
-    },
-    removeCustomer: async (parent, args, { Customer }) => {
-      const customer = await Customer.findByIdAndRemove({ _id: args._id });
-
-      return customer;
-    },
-    createVendor: async (parent, args, { Vendor }) => {
-      const vendor = await new Vendor(args).save();
-      vendor._id = vendor._id.toString();
-      return vendor;
-    },
-    updateVendor: async (parent, args, { Vendor }) => {
-      const vendor = await Vendor.findOneAndUpdate(
-        { _id: args._id },
-        args.customerInput,
-        { new: true }
-      );
-
-      return vendor;
-    },
-    removeVendor: async (parent, args, { Vendor }) => {
-      const vendor = await Vendor.findByIdAndRemove({ _id: args._id });
-
-      return vendor;
-    },
-    createOrder: async (parent, args, { Order }) => {
-      const order = await new Order(args).save();
-      order._id = order._id.toString();
-      return order;
-    },
-    updateOrder: async (parent, args, { Order }) => {
-      const order = await Order.findOneAndUpdate(
-        { _id: args._id },
-        args.customerInput,
-        { new: true }
-      );
-
-      return order;
-    },
-    removeOrder: async (parent, args, { Order }) => {
-      const order = await Order.findByIdAndRemove({ _id: args._id });
-
-      return order;
-    },
-    createOrderInfo: async (parent, args, { OrderInfo }) => {
-      const orderInfo = await new OrderInfo(args).save();
-      orderInfo._id = orderInfo._id.toString();
-      return orderInfo;
-    },
-    updateOrderInfo: async (parent, args, { OrderInfo }) => {
-      const orderInfo = await OrderInfo.findOneAndUpdate(
-        { _id: args._id },
-        args.customerInput,
-        { new: true }
-      );
-
-      return orderInfo;
-    },
-    removeOrderInfo: async (parent, args, { OrderInfo }) => {
-      const orderInfo = await OrderInfo.findByIdAndRemove({ _id: args._id });
-
-      return orderInfo;
     },
     // createAuthor: async (parent, args, { Author, Post }) => {
     //   if (args.posts) {
@@ -283,28 +119,64 @@ const resolvers = {
         .where("vendor")
         .equals(vendor._id)
         .exec();
-      
+
       return products;
     }
-  }
-  // Author: {
-  //   posts: (author, _, { Post }) => {
-  //     const posts = Post.find()
-  //       .where("author")
-  //       .equals(author._id)
-  //       .exec();
+  },
+  Product: {
+    vendor: (product, _, { Vendor }) => {
+      if (product.vendor) {
+        const vendor = Vendor.findById({ _id: product.vendor });
+        return vendor;
+      }
+    }
+  },
+  User: {
+    vendors: (user, _, { User }) => {
+      const vendor = Vendor.find()
+        .where("user")
+        .equals(user._id)
+        .exec();
 
-  //     return posts;
-  //   }
-  // },
-  // Post: {
-  //   author(post, _, { Author }) {
-  //     if (post.author) {
-  //       const author = Author.findById({ _id: post.author });
-  //       return author;
-  //     }
-  //   }
-  // }
+      return vendor;
+    }
+  },
+  Vendor: {
+    user: (vendor, _, { User }) => {
+      if (vendor.user) {
+        const user = User.findById({ _id: vendor.user });
+        return user;
+      }
+    }
+  },
+  User: {
+    customers: (user, _, { User }) => {
+      const customer = User.find()
+        .where("user")
+        .equals(user._id)
+        .exec();
+
+      return customer;
+    }
+  },
+  Customer: {
+    user: (customer, _, { User }) => {
+      if (customer.user) {
+        const user = User.findById({ _id: customer.user });
+        return user;
+      }
+    }
+  }
 };
+
+const resolvers = merge(
+  rootResolver, 
+  productResolver, 
+  orderResolver, 
+  customerResolver,
+  vendorResolver,
+  orderInfoResolver,
+  pictureResolver
+)
 
 export default resolvers;

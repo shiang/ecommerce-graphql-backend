@@ -7,7 +7,11 @@ export const customerSchema = new mongoose.Schema(
     email: { type: String },
     mobile: { type: String },
     profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: "Picture" },
-    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }]
+    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
   },
   { timestamps: true }
 );
