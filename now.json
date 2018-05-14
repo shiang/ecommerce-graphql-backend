@@ -1,0 +1,11 @@
+{
+  "env": {
+    "MONGO_URL": "@my-app-mongo-url",
+    "LOGIN_SECRET": "@my-app-login-secret",
+    "S3_BUCKET": "@my-app-s3-bucket",
+    "S3_ACCESS_KEY": "@my-app-s3-access-key",
+    "S3_SECRET_KEY": "@my-app-s3-secret-key",
+    "ALGOLIA_APP_ID": "@my-app-algolia-app-id",
+    "ALGOLIA_API_KEY": "@my-app-algolia-api-key"
+  }
+}
