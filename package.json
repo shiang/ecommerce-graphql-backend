@@ -33,6 +33,7 @@
     "micro-cors": "^0.1.0",
     "mocha": "^5.1.1",
     "mongoose": "^5.0.17",
+    "now-env": "^3.0.4",
     "subscriptions-transport-ws": "^0.9.9"
   },
   "devDependencies": {

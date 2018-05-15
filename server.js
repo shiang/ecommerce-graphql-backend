@@ -15,13 +15,13 @@ import jwt from 'jsonwebtoken';
 import { createServer } from "http";
 import { execute, subscribe } from "graphql";
 import { SubscriptionServer } from "subscriptions-transport-ws";
-import { config } from "dotenv";
+import { config } from "now-env";
 config();
 
 const CORS = require("micro-cors")();
 
 //mongoose.connect(keys.mongoURI);
-mongoose.connect("@my-app-mongo-url")
+mongoose.connect(process.env.MONGO_URL)
 
 // Initialize the app
 const app = express();
@@ -29,7 +29,7 @@ const app = express();
 const addUser = async(req, res) => {
   const token = req.header.authorization;
   try {
-    const user = await jwt.verify(token, "@my-app-login-secret");
+    const user = await jwt.verify(token, process.env.LOGIN_SECRET);
     req.user = user
   } catch(err) {
     console.log(err);
@@ -54,7 +54,7 @@ app.use(
       Vendor,
       Order,
       OrderInfo,
-      SECRET: "@my-app-login-secret",
+      SECRET: process.env.LOGIN_SECRET,
       user: req.user
     }
   }))
