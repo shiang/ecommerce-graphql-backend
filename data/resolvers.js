@@ -142,19 +142,19 @@ const rootResolver = {
       return vendor;
     }
   },
-  // Vendor: {
-  //   user: (vendor, _, { User }) => {
-  //     if (vendor.user) {
-  //       //const user = User.findById({ _id: vendor.user });
-  //       const user = User.find()
-  //         .where("vendor")
-  //         .equals(vendor.user)
-  //         .exec();
+  Vendor: {
+    user: (vendor, _, { User }) => {
+      if (vendor.user) {
+        //const user = User.findById({ _id: vendor.user });
+        const user = User.find()
+          .where("vendor")
+          .equals(vendor.user)
+          .exec();
 
-  //       return user;
-  //     }
-  //   }
-  // },
+        return user;
+      }
+    }
+  },
   User: {
     customer: (user, _, { Customer }) => {
       const customer = Customer.find()
@@ -165,19 +165,19 @@ const rootResolver = {
       return customer;
     }
   },
-  // Customer: {
-  //   user: (customer, _, { User }) => {
-  //     if (customer.user) {
-  //       //const user = User.findById({ _id: customer.user });
-  //       const user = User.find()
-  //         .where("customer")
-  //         .equals(customer.user)
-  //         .exec();
+  Customer: {
+    user: (customer, _, { User }) => {
+      if (customer.user) {
+        //const user = User.findById({ _id: customer.user });
+        const user = User.find()
+          .where("customer")
+          .equals(customer.user)
+          .exec();
 
-  //       return user;
-  //     }
-  //   }
-  // }
+        return user;
+      }
+    }
+  }
 };
 
 const resolvers = merge(

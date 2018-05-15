@@ -3,14 +3,15 @@ import mongoose from "mongoose";
 export const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true, "A user must have an email"]
+  },
+  googleId: {
+    type: String,
   },
   name: {
     type: String,
   },
   password: {
     type: String,
-    required: [true, "A user must have a password"]
   },
   vender: {
     type: mongoose.Schema.Types.ObjectId,

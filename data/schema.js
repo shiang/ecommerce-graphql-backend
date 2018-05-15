@@ -214,6 +214,7 @@ type User {
   email: String!
   vendor: Vendor
   customer: Customer
+  googleId: String
   createdAt: String!
   updatedAt: String!
 }
