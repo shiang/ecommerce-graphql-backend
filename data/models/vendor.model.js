@@ -9,10 +9,10 @@ export const vendorSchema = new mongoose.Schema(
     phone: { type: String },
     pictures: [{ type: mongoose.Schema.Types.ObjectId, ref: "Picture" }],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
-    user: {
+    users: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
-    }
+    }]
   },
   { timestamps: true }
 );

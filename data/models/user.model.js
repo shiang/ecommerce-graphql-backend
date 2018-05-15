@@ -12,18 +12,14 @@ export const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "A user must have a password"]
   },
-  venders: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Vendor"
-    }
-  ],
-  customers: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer"
-    }
-  ]
+  vender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Vendor"
+  },
+  customer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Customer"
+  }
 },
 {
     timestamps: true

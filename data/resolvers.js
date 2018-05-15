@@ -29,7 +29,6 @@ const rootResolver = {
   Query: {
     user: async (root, args, { user, User }) => {
       if (user) {
-        console.log(user);
         const userInfo = await User.findOne({ _id: user.user._id });
         return userInfo;
       }
@@ -134,7 +133,7 @@ const rootResolver = {
     }
   },
   User: {
-    vendors: (user, _, { User }) => {
+    vendor: (user, _, { Vendor }) => {
       const vendor = Vendor.find()
         .where("user")
         .equals(user._id)
@@ -144,16 +143,21 @@ const rootResolver = {
     }
   },
   Vendor: {
-    user: (vendor, _, { User }) => {
+    users: (vendor, _, { User }) => {
       if (vendor.user) {
-        const user = User.findById({ _id: vendor.user });
-        return user;
+        //const user = User.findById({ _id: vendor.user });
+        const users = User.find()
+          .where("vendor")
+          .equals(vendor.user)
+          .exec();
+
+        return users;
       }
     }
   },
   User: {
-    customers: (user, _, { User }) => {
-      const customer = User.find()
+    customer: (user, _, { Customer }) => {
+      const customer = Customer.find()
         .where("user")
         .equals(user._id)
         .exec();
@@ -162,10 +166,15 @@ const rootResolver = {
     }
   },
   Customer: {
-    user: (customer, _, { User }) => {
+    users: (customer, _, { User }) => {
       if (customer.user) {
-        const user = User.findById({ _id: customer.user });
-        return user;
+        //const user = User.findById({ _id: customer.user });
+        const users = User.find()
+          .where("customer")
+          .equals(customer.user)
+          .exec();
+
+        return users;
       }
     }
   }

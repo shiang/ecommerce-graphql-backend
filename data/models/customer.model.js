@@ -8,10 +8,10 @@ export const customerSchema = new mongoose.Schema(
     mobile: { type: String },
     profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: "Picture" },
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
-    user: {
+    users: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
-    }
+    }]
   },
   { timestamps: true }
 );
