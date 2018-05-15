@@ -27,7 +27,9 @@ mongoose.connect(process.env.MONGO_URL)
 const app = express();
 
 const addUser = async(req, res) => {
-  const token = req.header.authorization;
+  
+  const token = req.headers.authorization;
+  
   try {
     const user = await jwt.verify(token, process.env.LOGIN_SECRET);
     req.user = user

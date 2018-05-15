@@ -11,8 +11,7 @@ import customerResolver from './resolvers/customer.resolver';
 import vendorResolver from './resolvers/vendor.resolver';
 import orderInfoResolver from './resolvers/orderInfo.resolver';
 import pictureResolver from './resolvers/picture.resolver';
-import { config } from "dotenv";
-config();
+require("now-env");
 
 export const pubsub = new PubSub();
 
@@ -30,7 +29,8 @@ const rootResolver = {
   Query: {
     user: async (root, args, { user, User }) => {
       if (user) {
-        const userInfo = await User.findOne({ _id: user._id });
+        console.log(user);
+        const userInfo = await User.findOne({ _id: user.user._id });
         return userInfo;
       }
 
