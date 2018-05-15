@@ -29,6 +29,8 @@
     "hyperborder": "^1.1.1",
     "jsonwebtoken": "^8.2.1",
     "lodash": "^4.17.10",
+    "micro": "^9.3.0",
+    "micro-cors": "^0.1.0",
     "mocha": "^5.1.1",
     "mongoose": "^5.0.17",
     "subscriptions-transport-ws": "^0.9.9"

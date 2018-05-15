@@ -3,7 +3,6 @@ import bodyParser from 'body-parser';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import mongoose from 'mongoose';
 import schema from './data/schema';
-import keys from './config/keys';
 import { User } from "./data/models/user.model";
 import { Picture } from "./data/models/picture.model";
 import { Product } from "./data/models/product.model";
@@ -12,12 +11,14 @@ import { Vendor } from "./data/models/vendor.model";
 import { Order } from "./data/models/order.model";
 import { OrderInfo } from "./data/models/orderInfo.model";
 import jwt from 'jsonwebtoken';
-import { logInSecret } from './config/keys';
-import cors from 'cors';
+//import cors from 'cors';
 import { createServer } from "http";
 import { execute, subscribe } from "graphql";
 import { SubscriptionServer } from "subscriptions-transport-ws";
-require("dotenv").config();
+import { config } from "dotenv";
+config();
+
+const CORS = require("micro-cors")();
 
 //mongoose.connect(keys.mongoURI);
 mongoose.connect(process.env.MONGO_URI)
@@ -36,7 +37,7 @@ const addUser = async(req, res) => {
   req.next();
 };
 
-app.use(cors('*'));
+//app.use(cors('*'));
 app.use(addUser);
 
 // The GraphQL endpoint
@@ -66,7 +67,7 @@ app.use(
 
 const server = createServer(app);
 
-server.listen(4000, () => {
+CORS(server.listen(4000, () => {
   console.log("Go to http://localhost:4000/graphiql to run queries!");
   new SubscriptionServer({
     execute,
@@ -76,7 +77,7 @@ server.listen(4000, () => {
       server,
       path: '/subscriptions',
     });
-});
+}));
 
 // Start the server
 // app.listen(3000, () => {

@@ -11,7 +11,8 @@ import customerResolver from './resolvers/customer.resolver';
 import vendorResolver from './resolvers/vendor.resolver';
 import orderInfoResolver from './resolvers/orderInfo.resolver';
 import pictureResolver from './resolvers/picture.resolver';
-
+import { config } from "dotenv";
+config();
 
 export const pubsub = new PubSub();
 
