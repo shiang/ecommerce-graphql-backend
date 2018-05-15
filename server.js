@@ -15,8 +15,8 @@ import jwt from 'jsonwebtoken';
 import { createServer } from "http";
 import { execute, subscribe } from "graphql";
 import { SubscriptionServer } from "subscriptions-transport-ws";
-import { config } from "now-env";
-config();
+require("now-env");
+
 
 const CORS = require("micro-cors")();
 
