@@ -21,7 +21,7 @@ config();
 const CORS = require("micro-cors")();
 
 //mongoose.connect(keys.mongoURI);
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("@my-app-mongo-url")
 
 // Initialize the app
 const app = express();
@@ -29,7 +29,7 @@ const app = express();
 const addUser = async(req, res) => {
   const token = req.header.authorization;
   try {
-    const user = await jwt.verify(token, process.env.LOGIN_SECRET);
+    const user = await jwt.verify(token, "@my-app-login-secret");
     req.user = user
   } catch(err) {
     console.log(err);
@@ -41,20 +41,24 @@ const addUser = async(req, res) => {
 app.use(addUser);
 
 // The GraphQL endpoint
-app.use('/graphql', bodyParser.json(), graphqlExpress(req => ({ 
-  schema,
-  context: {
-    User,
-    Picture,
-    Product,
-    Customer,
-    Vendor,
-    Order,
-    OrderInfo,
-    SECRET: process.env.LOGIN_SECRET,
-    user: req.user
-  } 
-})));
+app.use(
+  "/graphql",
+  bodyParser.json(),
+  graphqlExpress(req => ({
+    schema,
+    context: {
+      User,
+      Picture,
+      Product,
+      Customer,
+      Vendor,
+      Order,
+      OrderInfo,
+      SECRET: "@my-app-login-secret",
+      user: req.user
+    }
+  }))
+);
 
 // GraphiQL, a visual editor for queries
 app.use(
