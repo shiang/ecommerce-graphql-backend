@@ -35,6 +35,10 @@ const rootResolver = {
 
       return null;
     },
+    allUsers: async(parent, args, { User }) => {
+      const users = User.find();
+      return users;
+    }
   },
   Mutation: {
     signS3: async (parent, { filename, filetype }) => {
@@ -133,49 +137,40 @@ const rootResolver = {
     }
   },
   User: {
-    vendor: (user, _, { Vendor }) => {
-      const vendor = Vendor.find()
+    vendor: async (user, _, { Vendor }) => {
+      const vendor = await Vendor.find()
         .where("user")
         .equals(user._id)
         .exec();
 
-      return vendor;
+      return vendor[0];
     }
   },
   Vendor: {
-    user: (vendor, _, { User }) => {
-      if (vendor.user) {
-        //const user = User.findById({ _id: vendor.user });
-        const user = User.find()
-          .where("vendor")
-          .equals(vendor.user)
-          .exec();
+    user: async (vendor, _, { User }) => {
+
+        const user = await User.findById({ _id: vendor.user })
 
         return user;
-      }
+
     }
   },
   User: {
-    customer: (user, _, { Customer }) => {
-      const customer = Customer.find()
+    customer: async (user, _, { Customer }) => {
+      
+      const customer = await Customer.find()
         .where("user")
         .equals(user._id)
         .exec();
 
-      return customer;
+
+      return customer[0];
     }
   },
   Customer: {
-    user: (customer, _, { User }) => {
-      if (customer.user) {
-        //const user = User.findById({ _id: customer.user });
-        const user = User.find()
-          .where("customer")
-          .equals(customer.user)
-          .exec();
-
-        return user;
-      }
+    user: async (customer, _, { User }) => {
+      const user = await User.findById({ _id: customer.user })
+      return user;
     }
   }
 };

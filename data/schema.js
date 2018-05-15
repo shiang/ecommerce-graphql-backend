@@ -10,6 +10,7 @@ type Query {
   vendor(_id: String!): Vendor!
   orderInfo(_id: String!): OrderInfo!
   user: User
+  allUsers: [User]
   allProducts: [Product!]
   allOrders: [Order!]
   allCustomers: [Customer!]
@@ -153,6 +154,7 @@ type Customer {
 
 input CustomerInput {
   name: String
+  user: String!
   email: String
   mobile: String
   mobileVerified: Boolean

@@ -97,9 +97,9 @@ passport.use(
     {
       clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-      callbackURL: "https://bcc8fe87.ngrok.io/auth/google/callback"
+      callbackURL: "https://cb5c5538.ngrok.io/auth/google/callback"
     },
-    async(accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // console.log("token: ", accessToken);
       // console.log("profile: ", profile);
 
@@ -109,12 +109,13 @@ passport.use(
         done(null, existingUser);
       } else {
         const user = await new User({ googleId: profile.id }).save();
-        const customer = await new Customer({ name: profile.name.givenName }).save();
+        const customer = await new Customer({
+          user: user._id,
+          name: profile.name.givenName
+        }).save();
 
-        await User.findOneAndUpdate(
-          { _id: user._id },
-          { customer: customer._id }
-        );
+        user.set({ customer: customer._id }).save();
+
         done(null, user);
       }
     }
