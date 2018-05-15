@@ -123,7 +123,7 @@ type Vendor {
   pictures: [Picture]
   products: [Product]
   orders: [Order]
-  users: [User]
+  user: User
   createdAt: String!
   updatedAt: String!
 }
@@ -146,7 +146,7 @@ type Customer {
   mobileVerified: Boolean
   profilePicture: Picture
   orders: [Order]
-  users: [User]
+  user: User
   createdAt: String!
   updatedAt: String!
 }
