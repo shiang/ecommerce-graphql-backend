@@ -7,6 +7,10 @@ export const customerSchema = new mongoose.Schema(
     email: { type: String },
     mobile: { type: String },
     profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: "Picture" },
+    cart: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "OrderInfo"
+    }],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
     user: {
       type: mongoose.Schema.Types.ObjectId,

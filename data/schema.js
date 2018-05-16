@@ -9,8 +9,8 @@ type Query {
   customer(_id: String!): Customer!
   vendor(_id: String!): Vendor!
   orderInfo(_id: String!): OrderInfo!
-  user: User
-  allUsers: [User]
+  user(_id: String!): User
+  allUsers: [User!]
   allProducts: [Product!]
   allOrders: [Order!]
   allCustomers: [Customer!]
@@ -132,6 +132,7 @@ type Vendor {
 input VendorInput {
   name: String
   description: String
+  user: String!
   address: String
   phone: String
   pictures: [String!]
@@ -146,6 +147,7 @@ type Customer {
   mobile: String
   mobileVerified: Boolean
   profilePicture: Picture
+  cart: [OrderInfo]
   orders: [Order]
   user: User
   createdAt: String!
@@ -159,6 +161,7 @@ input CustomerInput {
   mobile: String
   mobileVerified: Boolean
   profilePicture: String
+  cart: [String!]
   orders: [String!]
 }
 
@@ -183,8 +186,7 @@ input OrderInput {
 
 type OrderInfo {
   _id: String!
-  orderedFrom: Vendor!
-  orderedBy: Customer!
+  createdBy: Customer!
   product: Product!
   quantity: Int!
   createdAt: String!
@@ -212,8 +214,8 @@ enum OrderStatus {
 
 type User {
   _id: String
-  name: String!
-  email: String!
+  name: String
+  email: String
   vendor: Vendor
   customer: Customer
   googleId: String

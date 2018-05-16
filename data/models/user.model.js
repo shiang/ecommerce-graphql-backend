@@ -13,7 +13,7 @@ export const userSchema = new mongoose.Schema({
   password: {
     type: String,
   },
-  vender: {
+  vendor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vendor"
   },

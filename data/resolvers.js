@@ -2,15 +2,15 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import _ from "lodash";
 import { PubSub } from "graphql-subscriptions";
-import AWS from 'aws-sdk';
+import AWS from "aws-sdk";
 import { withFilter } from "graphql-subscriptions";
-import { merge } from 'lodash';
-import productResolver from './resolvers/product.resolver';
-import orderResolver from './resolvers/order.resolver';
-import customerResolver from './resolvers/customer.resolver';
-import vendorResolver from './resolvers/vendor.resolver';
-import orderInfoResolver from './resolvers/orderInfo.resolver';
-import pictureResolver from './resolvers/picture.resolver';
+import { merge } from "lodash";
+import productResolver from "./resolvers/product.resolver";
+import orderResolver from "./resolvers/order.resolver";
+import customerResolver from "./resolvers/customer.resolver";
+import vendorResolver from "./resolvers/vendor.resolver";
+import orderInfoResolver from "./resolvers/orderInfo.resolver";
+import pictureResolver from "./resolvers/picture.resolver";
 require("now-env");
 
 export const pubsub = new PubSub();
@@ -35,7 +35,7 @@ const rootResolver = {
 
       return null;
     },
-    allUsers: async(parent, args, { User }) => {
+    allUsers: async (parent, args, { User }) => {
       const users = User.find();
       return users;
     }
@@ -67,32 +67,23 @@ const rootResolver = {
         url
       };
     },
-    // createAuthor: async (parent, args, { Author, Post }) => {
-    //   if (args.posts) {
-    //     if (args.posts.length > 0) {
-    //       const author = await new Author(args).save();
-
-    //       args.posts.map(async pid => {
-    //         //console.log(pid);
-    //         const post = await Post.findOne({ _id: pid });
-    //         //console.log(post);
-    //         post.set({ author: author._id }).save();
-    //       });
-
-    //       author._id = author._id.toString();
-    //       return author;
-    //     }
-    //   } else {
-    //     const author = await new Author(args).save();
-    //     author._id = author._id.toString();
-    //     return author;
-    //   }
-    // },
-    signUp: async (parent, args, { User }) => {
+    signUp: async (parent, args, { User, Vendor }) => {
       args.password = await bcrypt.hash(args.password, 12);
       const user = await new User(args).save();
-      user._id = user._id.toString();
-      return user;
+
+      const vendor = await new Vendor({
+        user: user._id,
+        name: args.email
+      }).save();
+
+      //await user.set({ vendor: vendor._id }).save();
+      const updatedUser = await User.findByIdAndUpdate(user._id, { $set: { vendor: vendor } }, { new: true });
+
+      updatedUser._id = updatedUser._id.toString();
+      vendor._id = vendor._id.toString();
+
+      return updatedUser;
+
     },
     login: async (parent, { email, password }, { User, SECRET }) => {
       const user = await User.findOne({ email });
@@ -126,6 +117,11 @@ const rootResolver = {
         .exec();
 
       return products;
+    },
+    user: async (vendor, _, { User }) => {
+      const user = await User.findById({ _id: vendor.user });
+
+      return user;
     }
   },
   Product: {
@@ -137,7 +133,17 @@ const rootResolver = {
     }
   },
   User: {
+    customer: async (user, _, { Customer }) => {
+      const customer = await Customer.find()
+        .where("user")
+        .equals(user._id)
+        .exec();
+
+      return customer[0];
+    },
     vendor: async (user, _, { Vendor }) => {
+      console.log("USER: ", user);
+
       const vendor = await Vendor.find()
         .where("user")
         .equals(user._id)
@@ -146,43 +152,23 @@ const rootResolver = {
       return vendor[0];
     }
   },
-  Vendor: {
-    user: async (vendor, _, { User }) => {
-
-        const user = await User.findById({ _id: vendor.user })
-
-        return user;
-
-    }
-  },
-  User: {
-    customer: async (user, _, { Customer }) => {
-      
-      const customer = await Customer.find()
-        .where("user")
-        .equals(user._id)
-        .exec();
-
-
-      return customer[0];
-    }
-  },
   Customer: {
     user: async (customer, _, { User }) => {
-      const user = await User.findById({ _id: customer.user })
+      const user = await User.findById({ _id: customer.user });
+      
       return user;
     }
   }
 };
 
 const resolvers = merge(
-  rootResolver, 
-  productResolver, 
-  orderResolver, 
+  rootResolver,
+  productResolver,
+  orderResolver,
   customerResolver,
   vendorResolver,
   orderInfoResolver,
   pictureResolver
-)
+);
 
 export default resolvers;

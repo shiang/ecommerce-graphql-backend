@@ -97,7 +97,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-      callbackURL: "https://cb5c5538.ngrok.io/auth/google/callback"
+      callbackURL: "https://874d4ae1.ngrok.io/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
       // console.log("token: ", accessToken);

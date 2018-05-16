@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 export const vendorSchema = new mongoose.Schema(
   {
     name: { type: String, required: [true, "A product must have a name"] },
@@ -9,10 +8,8 @@ export const vendorSchema = new mongoose.Schema(
     phone: { type: String },
     pictures: [{ type: mongoose.Schema.Types.ObjectId, ref: "Picture" }],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
+    products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   },
   { timestamps: true }
 );
