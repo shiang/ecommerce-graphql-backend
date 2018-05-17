@@ -69,7 +69,7 @@ app.use(
   "/graphiql",
   graphiqlExpress({
     endpointURL: "/graphql",
-    subscriptionsEndpoint: "ws://localhost:4000/subscriptions"
+    subscriptionsEndpoint: "ws://localhost:6666/subscriptions"
   })
 );
 
@@ -151,8 +151,8 @@ app.get("/current_user", (req, res) => {
 
 const server = createServer(app);
 
-server.listen(4000, () => {
-  console.log("Go to http://localhost:4000/graphiql to run queries!");
+server.listen(6666, () => {
+  console.log("Go to http://localhost:6666/graphiql to run queries!");
   new SubscriptionServer(
     {
       execute,
