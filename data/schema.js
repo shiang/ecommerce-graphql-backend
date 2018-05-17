@@ -108,7 +108,7 @@ input ProductInput {
   category: String!
   images: [String]
   vendor: String
-}
+} 
 
 type SearchProductsAlgoliaPayload {
    hits: [String],
