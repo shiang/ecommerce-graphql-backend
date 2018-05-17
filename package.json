@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    
     "start": "nodemon ./server.js --exec babel-node"
   },
   "keywords": [],
@@ -40,10 +39,9 @@
     "subscriptions-transport-ws": "^0.9.9"
   },
   "devDependencies": {
-    "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "nodemon": "^1.17.4"
   }
 }
