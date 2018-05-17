@@ -32,5 +32,17 @@ export default {
 
             return customer;
         },
+        addToCart: async (parent, args, { Customer, OrderInfo }) => {
+
+            const orderInfo = await new OrderInfo(args).save();
+            await Customer.findByIdAndUpdate(
+                args.orderedBy,
+                { $push: { "cart": orderInfo._id } },
+                { new: true }
+            );
+
+            return orderInfo;
+
+        }
     }
 }

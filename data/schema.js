@@ -47,13 +47,14 @@ type Mutation {
   removeOrder(_id: String!): Order!
   createOrderInfo(orderInfoInput: OrderInfoInput!): OrderInfo!
   updateOrderInfo(_id: String!, OrderInfoInput: OrderInfoInput!): OrderInfo!
-  removeOrderInfo(_id: String!): OrderInfo!
+  removeOrderInfo(_id: String!, customerId: String!): OrderInfo!
   createVendor(vendorInput: VendorInput!): Vendor!
   updateVendor(_id: String!, vendorInput: VendorInput!): Vendor!
   removeVendor(_id: String!): Vendor!
   createCustomer(customerInput: CustomerInput!): Customer!
   updateCustomer(_id: String!, customerInput: CustomerInput!): Customer!
   removeCustomer(_id: String!): Customer!
+  addToCart(orderedBy: String!, product: String!, quantity: Int!): OrderInfo!
 }
 
 type Subscription {
@@ -86,6 +87,7 @@ type Product {
   name: String!
   description: String
   price: Float!
+  inOrderInfoes: [OrderInfo!]
   tags: [String!]
   category: String!
   images: [Picture]
@@ -99,6 +101,7 @@ input ProductInput {
   description: String
   price: Float!
   tags: [String!]
+  inOrderInfoes: [String!]
   category: String!
   images: [String]
   vendor: String
@@ -123,6 +126,7 @@ type Vendor {
   phone: String
   pictures: [Picture]
   products: [Product]
+  likedBy: [Customer]
   orders: [Order]
   user: User
   createdAt: String!
@@ -147,6 +151,7 @@ type Customer {
   mobile: String
   mobileVerified: Boolean
   profilePicture: Picture
+  likedVendors: [Vendor]
   cart: [OrderInfo]
   orders: [Order]
   user: User
@@ -186,7 +191,7 @@ input OrderInput {
 
 type OrderInfo {
   _id: String!
-  createdBy: Customer!
+  orderedBy: Customer!
   product: Product!
   quantity: Int!
   createdAt: String!
@@ -194,7 +199,6 @@ type OrderInfo {
 }
 
 input OrderInfoInput {
-  orderedFrom: String!
   orderedBy: String!
   product: String!
   quantity: Int!

@@ -4,7 +4,7 @@ export const orderInfoSchema = new mongoose.Schema(
     {
         quantity: { type: Number },
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-        createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" }
+        orderedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" }
     },
     { timestamps: true }
 );

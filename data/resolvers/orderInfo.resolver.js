@@ -21,14 +21,24 @@ export default {
     updateOrderInfo: async (parent, { orderInfoInput }, { OrderInfo }) => {
       const orderInfo = await OrderInfo.findOneAndUpdate(
         { _id: args._id },
-          orderInfoInput,
+        orderInfoInput,
         { new: true }
       );
 
       return orderInfo;
     },
-    removeOrderInfo: async (parent, args, { OrderInfo }) => {
-      const orderInfo = await OrderInfo.findByIdAndRemove({ _id: args._id });
+    removeOrderInfo: async (parent, args, { OrderInfo, Customer }) => {
+
+      // console.log(args);
+      const orderInfo = await OrderInfo.findById(args._id);
+      await Customer.findByIdAndUpdate(
+        args.customerId,
+        {
+          $pull: { "cart": orderInfo._id  }
+        }
+      );
+
+      //const removedOrderInfo = await OrderInfo.findByIdAndRemove({ _id: args._id });
 
       return orderInfo;
     }

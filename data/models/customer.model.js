@@ -12,6 +12,7 @@ export const customerSchema = new mongoose.Schema(
       ref: "OrderInfo"
     }],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+    likedVendors: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vendor" }],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"

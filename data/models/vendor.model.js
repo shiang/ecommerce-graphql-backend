@@ -9,6 +9,7 @@ export const vendorSchema = new mongoose.Schema(
     pictures: [{ type: mongoose.Schema.Types.ObjectId, ref: "Picture" }],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "Customer" }],
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
   },
   { timestamps: true }

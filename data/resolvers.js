@@ -11,7 +11,9 @@ import customerResolver from "./resolvers/customer.resolver";
 import vendorResolver from "./resolvers/vendor.resolver";
 import orderInfoResolver from "./resolvers/orderInfo.resolver";
 import pictureResolver from "./resolvers/picture.resolver";
+import { OrderInfo } from "./models/orderInfo.model";
 require("now-env");
+import mongoose from "mongoose";
 
 export const pubsub = new PubSub();
 
@@ -77,13 +79,16 @@ const rootResolver = {
       }).save();
 
       //await user.set({ vendor: vendor._id }).save();
-      const updatedUser = await User.findByIdAndUpdate(user._id, { $set: { vendor: vendor } }, { new: true });
+      const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $set: { vendor: vendor } },
+        { new: true }
+      );
 
       updatedUser._id = updatedUser._id.toString();
       vendor._id = vendor._id.toString();
 
       return updatedUser;
-
     },
     login: async (parent, { email, password }, { User, SECRET }) => {
       const user = await User.findOne({ email });
@@ -110,7 +115,7 @@ const rootResolver = {
     }
   },
   Vendor: {
-    products: (vendor, _, { Vendor }) => {
+    products: (vendor, _, { Product }) => {
       const products = Product.find()
         .where("vendor")
         .equals(vendor._id)
@@ -124,12 +129,25 @@ const rootResolver = {
       return user;
     }
   },
+  OrderInfo: {
+    product: async (orderInfo, _, { Product }) => {
+
+      const product = await Product.findById({ _id: orderInfo.product });
+      return product;
+    }
+  },
   Product: {
-    vendor: (product, _, { Vendor }) => {
+    vendor: async (product, _, { Vendor }) => {
       if (product.vendor) {
-        const vendor = Vendor.findById({ _id: product.vendor });
+        const vendor = await Vendor.findById({ _id: product.vendor });
         return vendor;
       }
+    },
+    inOrderInfoes: async(product, _, { OrderInfo }) => {
+      const orderInfoes = await OrderInfo.find({ product: product._id })
+      console.log(orderInfoes);
+      
+      return orderInfoes;
     }
   },
   User: {
@@ -155,8 +173,16 @@ const rootResolver = {
   Customer: {
     user: async (customer, _, { User }) => {
       const user = await User.findById({ _id: customer.user });
-      
+
       return user;
+    },
+    cart: async(customer, _, { OrderInfo }) => {
+      const orderInfoes = await OrderInfo.find()
+        .where("orderedBy")
+        .equals(customer._id)
+        .exec();
+
+      return orderInfoes;
     }
   }
 };
