@@ -80,6 +80,9 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 passport.serializeUser((user, done) => {
   done(null, user._id);
 });
@@ -90,8 +93,7 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 passport.use(
   new GoogleStrategy(
