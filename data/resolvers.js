@@ -114,42 +114,6 @@ const rootResolver = {
       return { token };
     }
   },
-  Vendor: {
-    products: (vendor, _, { Product }) => {
-      const products = Product.find()
-        .where("vendor")
-        .equals(vendor._id)
-        .exec();
-
-      return products;
-    },
-    user: async (vendor, _, { User }) => {
-      const user = await User.findById({ _id: vendor.user });
-
-      return user;
-    }
-  },
-  OrderInfo: {
-    product: async (orderInfo, _, { Product }) => {
-
-      const product = await Product.findById({ _id: orderInfo.product });
-      return product;
-    }
-  },
-  Product: {
-    vendor: async (product, _, { Vendor }) => {
-      if (product.vendor) {
-        const vendor = await Vendor.findById({ _id: product.vendor });
-        return vendor;
-      }
-    },
-    inOrderInfoes: async(product, _, { OrderInfo }) => {
-      const orderInfoes = await OrderInfo.find({ product: product._id })
-      console.log(orderInfoes);
-      
-      return orderInfoes;
-    }
-  },
   User: {
     customer: async (user, _, { Customer }) => {
       const customer = await Customer.find()
@@ -168,22 +132,7 @@ const rootResolver = {
         .exec();
 
       return vendor[0];
-    }
-  },
-  Customer: {
-    user: async (customer, _, { User }) => {
-      const user = await User.findById({ _id: customer.user });
-
-      return user;
     },
-    cart: async(customer, _, { OrderInfo }) => {
-      const orderInfoes = await OrderInfo.find()
-        .where("orderedBy")
-        .equals(customer._id)
-        .exec();
-
-      return orderInfoes;
-    }
   }
 };
 

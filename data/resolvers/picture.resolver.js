@@ -26,5 +26,31 @@ export default {
 
       return picture;
     }
+  },
+  Picture: {
+    product: async(picture, _, { Product }) => {
+      const product = Product.find()
+        .where("product")
+        .equals(picture.product)
+        .exec()
+      
+        return product;
+    },
+    vendor: async (picture, _, { Vendor }) => {
+      const vendor = Vendor.find()
+        .where("vendor")
+        .equals(picture.vendor)
+        .exec()
+
+      return vendor;
+    },
+    customer: async (picture, _, { Customer }) => {
+      const customer = Customer.find()
+        .where("customer")
+        .equals(picture.customer)
+        .exec()
+
+      return customer;
+    },
   }
 };

@@ -42,5 +42,19 @@ export default {
 
       return removedOrderInfo;
     }
-  }
+  },
+  OrderInfo: {
+    product: async (orderInfo, _, { Product }) => {
+      const product = await Product.findById({ _id: orderInfo.product });
+      return product;
+    },
+    orderedBy: async (orderInfo, _, { Customer }) => {
+      const orderedBy = await Customer.findById({ _id: orderInfo.orderedBy });
+      return orderedBy;
+    },
+    order: async (orderInfo, _, { Order }) => {
+      const order = await Order.findById({ _id: orderInfo.order });
+      return order;
+    }
+  },
 };

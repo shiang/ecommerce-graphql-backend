@@ -36,7 +36,7 @@ type Mutation {
   signUp(email: String!, name: String, password: String!): User!
   login(email: String!, password: String!): AuthPayload!
   signS3(filename: String!, filetype: String!): S3Payload!
-  createPicture(name: String!, pictureUrl: String!): Picture!
+  createPicture(name: String!, pictureUrl: String!, product: String, vendor: String, customer: String): Picture!
   updatePicture(_id: String!, name: String!, pictureUrl: String!): Picture!
   removePicture(_id: String!): Picture!
   createProduct(productInput: ProductInput): Product!
@@ -46,7 +46,7 @@ type Mutation {
   updateOrder(_id: String!, OrderInput: OrderInput!): Order!
   removeOrder(_id: String!): Order!
   createOrderInfo(orderInfoInput: OrderInfoInput!): OrderInfo!
-  updateOrderInfo(_id: String!, orderedBy: String, quantity: Int, product: String): OrderInfo!
+  updateOrderInfo(_id: String!, orderedBy: String, quantity: Int, product: String, order: String): OrderInfo!
   removeOrderInfo(_id: String!, customerId: String!): OrderInfo!
   createVendor(vendorInput: VendorInput!): Vendor!
   updateVendor(_id: String!, vendorInput: VendorInput!): Vendor!
@@ -77,6 +77,9 @@ type S3Payload {
 type Picture {
   _id: String
   name: String!
+  product: Product
+  vendor: Vendor
+  customer: Customer
   pictureUrl: String!
   createdAt: String!
   updatedAt: String!
@@ -192,6 +195,7 @@ input OrderInput {
 type OrderInfo {
   _id: String!
   orderedBy: Customer!
+  order: Order
   product: Product!
   quantity: Int!
   createdAt: String!

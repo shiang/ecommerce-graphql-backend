@@ -32,5 +32,23 @@ export default {
 
       return order;
     }
+  },
+  Order: {
+    vendor: async(order, _, { Vendor }) => {
+      const vendor = await Vendor.findById({ _id: order.vendor })
+      return vendor;
+    },
+    customer: async (order, _, { Customer }) => {
+      const customer = await Customer.findById({ _id: order.customer })
+      return customer;
+    },
+    orderedItems: async(order, _, { OrderInfo }) => {
+      const orderItems = await OrderInfo.find()
+        .where("order")
+        .equals(order._id)
+        .exec();
+      
+      return orderItems;
+    }
   }
 };

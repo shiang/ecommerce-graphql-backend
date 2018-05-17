@@ -23,14 +23,12 @@ export default {
       const productObj = {
         product,
         objectID: product._id
-      }
+      };
       productIndex.addObject(productObj, (err, content) => {
-        if(err) {
-          console.log(err)
+        if (err) {
+          console.log(err);
         }
-
-        console.log(content);
-      })
+      });
       return product;
     },
     updateProduct: async (parent, args, { Product }) => {
@@ -46,12 +44,12 @@ export default {
       };
 
       productIndex.saveObject(productObj, (err, content) => {
-        if(err) {
-          console.log(err)
+        if (err) {
+          console.log(err);
         }
 
         console.log(content);
-      })
+      });
       console.log(product);
       return product;
     },
@@ -59,6 +57,24 @@ export default {
       const product = await Product.findByIdAndRemove({ _id: args._id });
 
       return product;
+    }
+  },
+  Product: {
+    vendor: async (product, _, { Vendor }) => {
+      if (product.vendor) {
+        const vendor = await Vendor.findById({ _id: product.vendor });
+        return vendor;
+      }
+    },
+    inOrderInfoes: async (product, _, { OrderInfo }) => {
+      const orderInfoes = await OrderInfo.find({ product: product._id });
+      console.log(orderInfoes);
+
+      return orderInfoes;
+    },
+    images: async (product, _, { Picture }) => {
+      const images = await Picture.find({ product: product._id });
+      return images;
     }
   }
 };
