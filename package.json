@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require babel-core/register ./test/*_test.js",
+    
     "start": "nodemon ./server.js --exec babel-node"
   },
   "keywords": [],
