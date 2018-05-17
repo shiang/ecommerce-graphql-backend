@@ -11,7 +11,7 @@ import { Vendor } from "./data/models/vendor.model";
 import { Order } from "./data/models/order.model";
 import { OrderInfo } from "./data/models/orderInfo.model";
 import jwt from "jsonwebtoken";
-//import cors from 'cors';
+import cors from "cors";
 import { createServer } from "http";
 import { execute, subscribe } from "graphql";
 import { SubscriptionServer } from "subscriptions-transport-ws";
@@ -20,13 +20,14 @@ import GoogleStrategy from "passport-google-oauth20";
 import cookieSession from "cookie-session";
 require("now-env");
 
-const CORS = require("micro-cors")();
+//const CORS = require("micro-cors")();
 
 //mongoose.connect(keys.mongoURI);
 mongoose.connect(process.env.MONGO_URL);
 
 // Initialize the app
 const app = express();
+app.use(cors());
 
 const addUser = async (req, res) => {
   const token = req.headers.authorization;
@@ -144,26 +145,24 @@ app.get("/logout", (req, res) => {
 
 app.get("/current_user", (req, res) => {
   res.send(req.user);
-})
+});
 
 const server = createServer(app);
 
-CORS(
-  server.listen(4000, () => {
-    console.log("Go to http://localhost:4000/graphiql to run queries!");
-    new SubscriptionServer(
-      {
-        execute,
-        subscribe,
-        schema
-      },
-      {
-        server,
-        path: "/subscriptions"
-      }
-    );
-  })
-);
+server.listen(4000, () => {
+  console.log("Go to http://localhost:4000/graphiql to run queries!");
+  new SubscriptionServer(
+    {
+      execute,
+      subscribe,
+      schema
+    },
+    {
+      server,
+      path: "/subscriptions"
+    }
+  );
+});
 
 // Start the server
 // app.listen(3000, () => {
