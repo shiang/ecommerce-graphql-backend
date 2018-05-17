@@ -100,7 +100,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-      callbackURL: "https://ur-shop-graphql-02.now.sh/auth/google/callback"
+      callbackURL: "https://ur-shop-graphql-03.now.sh/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
       // console.log("token: ", accessToken);
