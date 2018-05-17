@@ -18,10 +18,10 @@ export default {
       orderInfo._id = orderInfo._id.toString();
       return orderInfo;
     },
-    updateOrderInfo: async (parent, { orderInfoInput }, { OrderInfo }) => {
+    updateOrderInfo: async (parent, args, { OrderInfo }) => {
       const orderInfo = await OrderInfo.findOneAndUpdate(
         { _id: args._id },
-        orderInfoInput,
+        args,
         { new: true }
       );
 
@@ -38,9 +38,9 @@ export default {
         }
       );
 
-      //const removedOrderInfo = await OrderInfo.findByIdAndRemove({ _id: args._id });
+      const removedOrderInfo = await OrderInfo.findByIdAndRemove({ _id: args._id });
 
-      return orderInfo;
+      return removedOrderInfo;
     }
   }
 };

@@ -46,7 +46,7 @@ type Mutation {
   updateOrder(_id: String!, OrderInput: OrderInput!): Order!
   removeOrder(_id: String!): Order!
   createOrderInfo(orderInfoInput: OrderInfoInput!): OrderInfo!
-  updateOrderInfo(_id: String!, OrderInfoInput: OrderInfoInput!): OrderInfo!
+  updateOrderInfo(_id: String!, orderedBy: String, quantity: Int, product: String): OrderInfo!
   removeOrderInfo(_id: String!, customerId: String!): OrderInfo!
   createVendor(vendorInput: VendorInput!): Vendor!
   updateVendor(_id: String!, vendorInput: VendorInput!): Vendor!
