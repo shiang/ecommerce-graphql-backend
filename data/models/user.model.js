@@ -20,6 +20,10 @@ export const userSchema = new mongoose.Schema({
   customer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer"
+  },
+  message: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Message"
   }
 },
 {

@@ -11,6 +11,8 @@ import customerResolver from "./resolvers/customer.resolver";
 import vendorResolver from "./resolvers/vendor.resolver";
 import orderInfoResolver from "./resolvers/orderInfo.resolver";
 import pictureResolver from "./resolvers/picture.resolver";
+import chatroomResolver from "./resolvers/chatroom.resolver";
+import messageResolver from "./resolvers/message.resolver";
 import { OrderInfo } from "./models/orderInfo.model";
 require("now-env");
 import mongoose from "mongoose";
@@ -18,6 +20,8 @@ import mongoose from "mongoose";
 export const pubsub = new PubSub();
 
 export const PRODUCT_CREATED = "PRODUCT_CREATED";
+export const CHATROOM_CREATED = "CHATROOM_CREATED";
+export const MESSAGE_CREATED = "MESSAGE_CREATED";
 
 const rootResolver = {
   Subscription: {
@@ -26,6 +30,28 @@ const rootResolver = {
       //   return payload.createdPost.title === variables.title;
       // })
       subscribe: () => pubsub.asyncIterator(PRODUCT_CREATED)
+    },
+    chatroomCreated: {
+      // subscribe: withFilter(
+      //   () => pubsub.asyncIterator(CHATROOM_CREATED),
+      //   (payload, variables) => {
+      //     console.log(payload)
+      //     console.log(variables)
+      //     return payload.createChatroom.vendor === variables.chatroomInput.vendor;
+      //   }
+      // )
+      subscribe: () => pubsub.asyncIterator(CHATROOM_CREATED)
+    },
+    messageCreated: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(MESSAGE_CREATED),
+        (payload, variables) => {
+          return (
+            payload.createMessage.inChatroom ===
+            variables.messageInput.inChatroom
+          );
+        }
+      )
     }
   },
   Query: {
@@ -133,6 +159,14 @@ const rootResolver = {
 
       return vendor[0];
     },
+    message: async (user, _, { Message }) => {
+      const message = await Message.find()
+        .where("from")
+        .equals(user._id)
+        .exec();
+
+      return message[0];
+    }
   }
 };
 
@@ -143,7 +177,9 @@ const resolvers = merge(
   customerResolver,
   vendorResolver,
   orderInfoResolver,
-  pictureResolver
+  pictureResolver,
+  chatroomResolver,
+  messageResolver
 );
 
 export default resolvers;

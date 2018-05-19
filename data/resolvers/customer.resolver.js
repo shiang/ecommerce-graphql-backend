@@ -78,6 +78,14 @@ export default {
             .exec()
 
         return orders;
+    },
+    chats: async (customer, _, { Chatroom }) => {
+      const chats = await Chatroom.find()
+        .where("customer")
+        .equals(customer._id)
+        .exec()
+
+      return chats;
     }
   }
 };

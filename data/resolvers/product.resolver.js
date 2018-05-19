@@ -74,6 +74,7 @@ export default {
     },
     images: async (product, _, { Picture }) => {
       const images = await Picture.find({ product: product._id });
+      console.log(images);
       return images;
     }
   }

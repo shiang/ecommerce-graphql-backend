@@ -9,7 +9,11 @@ type Query {
   customer(_id: String!): Customer!
   vendor(_id: String!): Vendor!
   orderInfo(_id: String!): OrderInfo!
-  user(_id: String!): User
+  user(_id: String!): User!
+  chatroom(_id: String!): Chatroom!
+  message(_id: String!): Message!
+  allChatrooms: [Chatroom!]
+  allMessages: [Message!]
   allUsers: [User!]
   allProducts: [Product!]
   allOrders: [Order!]
@@ -39,8 +43,8 @@ type Mutation {
   createPicture(name: String!, pictureUrl: String!, product: String, vendor: String, customer: String): Picture!
   updatePicture(_id: String!, name: String!, pictureUrl: String!): Picture!
   removePicture(_id: String!): Picture!
-  createProduct(productInput: ProductInput): Product!
-  updateProduct(_id: String!, productInput: ProductInput): Product!
+  createProduct(productInput: ProductInput!): Product!
+  updateProduct(_id: String!, productInput: ProductInput!): Product!
   removeProduct(_id: String!): Product!
   createOrder(orderInput: OrderInput!): Order!
   updateOrder(_id: String!, OrderInput: OrderInput!): Order!
@@ -55,10 +59,46 @@ type Mutation {
   updateCustomer(_id: String!, customerInput: CustomerInput!): Customer!
   removeCustomer(_id: String!): Customer!
   addToCart(orderedBy: String!, product: String!, quantity: Int!): OrderInfo!
+  createChatroom(chatroomInput: ChatroomInput!): Chatroom!
+  removeChatroom(_id: String!): Chatroom!
+  createMessage(messageInput: MessageInput!): Message!
 }
 
 type Subscription {
   productCreated: Product
+  chatroomCreated: Chatroom
+  messageCreated: Message
+}
+
+type Chatroom {
+  _id: String!
+  name: String
+  customer: Customer!
+  vendor: Vendor!
+  messages: [Message!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+input ChatroomInput {
+  name: String!
+  customer: String!
+  vendor: String!
+}
+
+type Message {
+  _id: String!
+  from: User
+  inChatroom: Chatroom
+  content: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+input MessageInput {
+  from: String!
+  inChatroom: String!
+  content: String!
 }
 
 type AuthPayload {
@@ -104,10 +144,11 @@ input ProductInput {
   description: String
   price: Float!
   tags: [String!]
-  inOrderInfoes: [String!]
   category: String!
-  images: [String]
-  vendor: String
+  images: [String!]
+  vendor: String,
+  customer: String,
+  product: String
 } 
 
 type SearchProductsAlgoliaPayload {
@@ -131,6 +172,7 @@ type Vendor {
   products: [Product]
   likedBy: [Customer]
   orders: [Order]
+  chats: [Chatroom!]
   user: User
   createdAt: String!
   updatedAt: String!
@@ -139,7 +181,6 @@ type Vendor {
 input VendorInput {
   name: String
   description: String
-  user: String!
   address: String
   phone: String
   pictures: [String!]
@@ -157,6 +198,7 @@ type Customer {
   likedVendors: [Vendor]
   cart: [OrderInfo]
   orders: [Order]
+  chats: [Chatroom!]
   user: User
   createdAt: String!
   updatedAt: String!
@@ -225,6 +267,7 @@ type User {
   name: String
   email: String
   vendor: Vendor
+  message: Message
   customer: Customer
   googleId: String
   createdAt: String!

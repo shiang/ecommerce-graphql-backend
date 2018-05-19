@@ -18,10 +18,10 @@ export default {
             vendor._id = vendor._id.toString();
             return vendor;
         },
-        updateVendor: async (parent, { vendorInput }, { Vendor }) => {
+        updateVendor: async (parent, args, { Vendor }) => {
             const vendor = await Vendor.findOneAndUpdate(
                 { _id: args._id },
-                vendorInput,
+                args.vendorInput,
                 { new: true }
             );
 
@@ -70,6 +70,14 @@ export default {
             const user = await User.findById({ _id: vendor.user });
 
             return user;
+        },
+        chats: async (vendor, _, { Chatroom }) => {
+            const chats = await Chatroom.find()
+                .where("vendor")
+                .equals(vendor._id)
+                .exec()
+
+            return chats;
         }
     },
 }

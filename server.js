@@ -10,6 +10,8 @@ import { Customer } from "./data/models/customer.model";
 import { Vendor } from "./data/models/vendor.model";
 import { Order } from "./data/models/order.model";
 import { OrderInfo } from "./data/models/orderInfo.model";
+import { Chatroom } from "./data/models/chatroom.model";
+import { Message } from "./data/models/message.model";
 import jwt from "jsonwebtoken";
 import cors from "cors";
 import { createServer } from "http";
@@ -58,6 +60,8 @@ app.use(
       Vendor,
       Order,
       OrderInfo,
+      Chatroom,
+      Message,
       SECRET: process.env.LOGIN_SECRET,
       user: req.user
     }

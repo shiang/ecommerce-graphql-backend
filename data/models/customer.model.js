@@ -12,6 +12,7 @@ export const customerSchema = new mongoose.Schema(
       ref: "OrderInfo"
     }],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+    chats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Chatroom" }],
     likedVendors: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vendor" }],
     user: {
       type: mongoose.Schema.Types.ObjectId,

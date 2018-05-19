@@ -36,6 +36,7 @@
     "now-env": "^3.0.4",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",
+    "signale": "^1.0.1",
     "subscriptions-transport-ws": "^0.9.9"
   },
   "devDependencies": {
