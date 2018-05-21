@@ -15,10 +15,12 @@ export default {
         }
     },
     Mutation: {
-        createMessage: async (parent, { messageInput }, { Message }) => {
+        createMessage: async (parent, { messageInput }, { Message, Chatroom }) => {
+            const chatroom = Chatroom.findById(messageInput.inChatroom);
             const message = await new Message(messageInput).save();
+            chatroom.message.push(message);
             message._id = message._id.toString();
-            pubsub.publish(MESSAGE_CREATED, { messageCreated: message });
+            pubsub.publish(MESSAGE_CREATED, { messageCreated: message, inChatroom: message.inChatroom });
             return message;
         },
         // updateCustomer: async (parent, { customerInput }, { Customer }) => {

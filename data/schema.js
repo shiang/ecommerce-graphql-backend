@@ -9,7 +9,7 @@ type Query {
   customer(_id: String!): Customer!
   vendor(_id: String!): Vendor!
   orderInfo(_id: String!): OrderInfo!
-  user(_id: String!): User!
+  user(_id: String!): User
   chatroom(_id: String!): Chatroom!
   message(_id: String!): Message!
   allChatrooms: [Chatroom!]
@@ -66,8 +66,8 @@ type Mutation {
 
 type Subscription {
   productCreated: Product
-  chatroomCreated: Chatroom
-  messageCreated: Message
+  chatroomCreated(vendor: String!): Chatroom
+  messageCreated(inChatroom: String!): Message
 }
 
 type Chatroom {
@@ -216,12 +216,44 @@ input CustomerInput {
 }
 
 type Order {
-  _id: String
+  _id: String!
   vendor: Vendor
   customer: Customer
   total: Float
+  billingDetail: BillingDetail
+  shippingDetail: ShippingDetail
   orderedItems: [OrderInfo]
   orderStatus: OrderStatus
+  createdAt: String!
+  updatedAt: String!
+}
+
+type BillingDetail {
+  _id: String!
+  firstName: String
+  lastName: String
+  companyName: String
+  email: String
+  mobile: String
+  country: String
+  city: String
+  address: String
+  customer: Customer
+  createdAt: String!
+  updatedAt: String!
+}
+
+type ShippingDetail {
+  _id: String!
+  firstName: String
+  lastName: String
+  companyName: String
+  email: String
+  mobile: String
+  country: String
+  city: String
+  address: String
+  customer: Customer
   createdAt: String!
   updatedAt: String!
 }
@@ -229,6 +261,8 @@ type Order {
 input OrderInput {
   vendor: String!
   customer: String!
+  billingDetail: String!
+  shippingDetail: String!
   total: Float!
   orderedItems: [String!]!
   orderStatus: String!

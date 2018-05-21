@@ -32,15 +32,15 @@ const rootResolver = {
       subscribe: () => pubsub.asyncIterator(PRODUCT_CREATED)
     },
     chatroomCreated: {
-      // subscribe: withFilter(
-      //   () => pubsub.asyncIterator(CHATROOM_CREATED),
-      //   (payload, variables) => {
-      //     console.log(payload)
-      //     console.log(variables)
-      //     return payload.createChatroom.vendor === variables.chatroomInput.vendor;
-      //   }
-      // )
-      subscribe: () => pubsub.asyncIterator(CHATROOM_CREATED)
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(CHATROOM_CREATED),
+        (payload, variables) => {
+          console.log(payload);
+          //console.log(variables)
+          return payload.chatroomCreated.vendor.toString() === variables.vendor;
+        }
+      )
+      //subscribe: () => pubsub.asyncIterator(CHATROOM_CREATED)
     },
     messageCreated: {
       subscribe: withFilter(
@@ -48,7 +48,7 @@ const rootResolver = {
         (payload, variables) => {
           return (
             payload.createMessage.inChatroom ===
-            variables.messageInput.inChatroom
+            variables.inChatroom
           );
         }
       )
@@ -57,6 +57,7 @@ const rootResolver = {
   Query: {
     user: async (root, args, { user, User }) => {
       if (user) {
+        console.log(user)
         const userInfo = await User.findOne({ _id: user.user._id });
         return userInfo;
       }

@@ -5,11 +5,13 @@ export default {
             return vendor;
         },
         allVendors: async (parent, args, { Vendor }) => {
+            // const vendors = await Vendor.find();
+            // return vendors.map(vendor => {
+            //     vendor._id = vendor._id.toString();
+            //     return vendor;
+            // });
             const vendors = await Vendor.find();
-            return vendors.map(vendor => {
-                vendor._id = vendor._id.toString();
-                return vendor;
-            });
+            return vendors;
         }
     },
     Mutation: {

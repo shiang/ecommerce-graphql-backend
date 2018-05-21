@@ -140,7 +140,8 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google"),
   (req, res) => {
-    res.redirect("/");
+    console.log(req);
+    res.redirect("https://ur-shop-client.now.sh/");
   }
 );
 

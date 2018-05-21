@@ -19,11 +19,11 @@ export default {
       const chatroom = await new Chatroom(chatroomInput).save();
       chatroom._id = chatroom._id.toString();
 
-      pubsub.publish(CHATROOM_CREATED, { chatroomCreated: chatroom });
       
       await Customer.findByIdAndUpdate({ _id: chatroomInput.customer }, { $push: { chats: chatroom }}, { new: true })
       await Vendor.findByIdAndUpdate({ _id: chatroomInput.vendor }, { $push: { chats: chatroom }}, { new: true })
-
+      
+      pubsub.publish(CHATROOM_CREATED, { chatroomCreated: chatroom });
       console.log(chatroom);
       return chatroom;
     },
@@ -50,6 +50,7 @@ export default {
     },
     vendor: async (chatroom, _, { Vendor }) => {
       const vendor = await Vendor.findById({ _id: chatroom.vendor });
+      console.log("VENDOR: ", vendor);
 
       return vendor;
     },

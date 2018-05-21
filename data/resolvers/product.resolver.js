@@ -16,20 +16,46 @@ export default {
     }
   },
   Mutation: {
-    createProduct: async (parent, { productInput }, { Product }) => {
-      const product = await new Product(productInput).save();
-      product._id = product._id.toString();
-      pubsub.publish(PRODUCT_CREATED, { productCreated: product });
-      const productObj = {
-        product,
-        objectID: product._id
-      };
-      productIndex.addObject(productObj, (err, content) => {
-        if (err) {
-          console.log(err);
-        }
-      });
-      return product;
+    createProduct: async (parent, { productInput }, { user, Product, Vendor }) => {
+
+      if(user) {
+        const product = await new Product(productInput).save();
+        await Vendor.findOneAndUpdate({ user: user.user._id }, {
+          $push: { products: product }
+        }, { new: true });
+
+        product._id = product._id.toString();
+        pubsub.publish(PRODUCT_CREATED, { productCreated: product });
+        const productObj = {
+          product,
+          objectID: product._id
+        };
+        productIndex.addObject(productObj, (err, content) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+        return product;
+
+      }
+      // const product = await new Product(productInput).save();
+
+      // await Vendor.findByIdAndUpdate({ _id: productInput.vendor }, {
+      //   $push: { products: product }
+      // }, { new: true })
+
+      // product._id = product._id.toString();
+      // pubsub.publish(PRODUCT_CREATED, { productCreated: product });
+      // const productObj = {
+      //   product,
+      //   objectID: product._id
+      // };
+      // productIndex.addObject(productObj, (err, content) => {
+      //   if (err) {
+      //     console.log(err);
+      //   }
+      // });
+      return null;
     },
     updateProduct: async (parent, args, { Product }) => {
       const product = await Product.findOneAndUpdate(
@@ -53,8 +79,14 @@ export default {
       console.log(product);
       return product;
     },
-    removeProduct: async (parent, args, { Product }) => {
+    removeProduct: async (parent, args, { Product, Vendor }) => {
       const product = await Product.findByIdAndRemove({ _id: args._id });
+
+      await Vendor.findByIdAndUpdate({ _id: product.vendor }, {
+        $pull: { products: product }
+      })
+
+      await productIndex.deleteObject(product._id);
 
       return product;
     }
