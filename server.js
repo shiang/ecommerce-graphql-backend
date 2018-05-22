@@ -31,7 +31,7 @@ mongoose.connect(process.env.MONGO_URL);
 const app = express();
 app.use(cors({
   credentials: true,
-  origin: 'http://localhost:3000'
+  origin: 'https://ur-shop-graphql-client.now.sh'
 }));
 
 const addUser = async (req, res) => {
@@ -56,7 +56,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-      callbackURL: "https://60ec4565.ngrok.io/auth/google/callback"
+      callbackURL: "https://ur-shop-graphql-server.now.sh/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
       // console.log("token: ", accessToken);
@@ -67,7 +67,6 @@ passport.use(
       if (existingUser) {
         done(null, existingUser);
       } else {
-        
         const user = await new User({ googleId: profile.id }).save();
         const customer = await new Customer({
           user: user._id,
@@ -138,7 +137,7 @@ app.use(
   "/graphiql",
   graphiqlExpress({
     endpointURL: "/graphql",
-    subscriptionsEndpoint: "ws://localhost:4000/subscriptions"
+    subscriptionsEndpoint: "wss://ur-shop-graphql-server.now.sh/subscriptions"
   })
 );
 
@@ -153,15 +152,15 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google"),
   (req, res) => {
-    //res.redirect("https://ur-shop-client.now.sh/");
-    res.redirect("/");
+    res.redirect("https://ur-shop-graphql-client.now.sh/");
+    //res.redirect("/");
   }
 );
 
 app.get("/logout", (req, res) => {
   req.logout();
-  //res.redirect("https://ur-shop-client.now.sh/");
-  res.redirect("/");
+  res.redirect("https://ur-shop-graphql-client.now.sh/");
+  //res.redirect("/");
 });
 
 app.get("/current_user", (req, res) => {
@@ -173,7 +172,7 @@ app.get("/current_user", (req, res) => {
 const server = createServer(app);
 
 server.listen(4000, () => {
-  console.log("Go to http://localhost:4000/graphiql to run queries!");
+  console.log("Server ready to run queries!");
   new SubscriptionServer(
     {
       execute,

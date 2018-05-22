@@ -68,6 +68,7 @@ type Subscription {
   productCreated: Product
   chatroomCreated(vendor: String!): Chatroom
   messageCreated(inChatroom: String!): Message
+  orderInfoCreated: OrderInfo!
 }
 
 type Chatroom {

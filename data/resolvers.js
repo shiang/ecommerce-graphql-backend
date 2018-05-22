@@ -22,6 +22,7 @@ export const pubsub = new PubSub();
 export const PRODUCT_CREATED = "PRODUCT_CREATED";
 export const CHATROOM_CREATED = "CHATROOM_CREATED";
 export const MESSAGE_CREATED = "MESSAGE_CREATED";
+export const ORDERINFO_CREATED = "ORDERINFO_CREATED";
 
 const rootResolver = {
   Subscription: {
@@ -30,6 +31,17 @@ const rootResolver = {
       //   return payload.createdPost.title === variables.title;
       // })
       subscribe: () => pubsub.asyncIterator(PRODUCT_CREATED)
+    },
+    orderInfoCreated: {
+      // subscribe: withFilter(
+      //   () => pubsub.asyncIterator(ORDERINFO_CREATED),
+      //   (payload, variables) => {
+      //     console.log("CART_PAYLOAD: ", payload);
+      //     console.log("VAR: ", variables);
+      //     return payload.orderedBy.toString() === variables.orderedBy.toString()
+      //   }
+      // )
+      subscribe: () => pubsub.asyncIterator(ORDERINFO_CREATED)
     },
     chatroomCreated: {
       subscribe: withFilter(
@@ -46,10 +58,7 @@ const rootResolver = {
       subscribe: withFilter(
         () => pubsub.asyncIterator(MESSAGE_CREATED),
         (payload, variables) => {
-          return (
-            payload.createMessage.inChatroom ===
-            variables.inChatroom
-          );
+          return payload.createMessage.inChatroom === variables.inChatroom;
         }
       )
     }
@@ -57,7 +66,7 @@ const rootResolver = {
   Query: {
     user: async (root, args, { user, User }) => {
       if (user) {
-        console.log(user)
+        console.log(user);
         const userInfo = await User.findOne({ _id: user.user._id });
         return userInfo;
       }

@@ -1,3 +1,5 @@
+import { pubsub, ORDERINFO_CREATED } from "../resolvers";
+
 export default {
   Query: {
     customer: async (parent, args, { Customer, user }) => {
@@ -40,6 +42,8 @@ export default {
         { $push: { cart: orderInfo._id } },
         { new: true }
       );
+
+      pubsub.publish(ORDERINFO_CREATED, { orderInfoCreated: orderInfo });
 
       return orderInfo;
     }

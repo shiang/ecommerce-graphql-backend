@@ -16,6 +16,7 @@ export default {
     createOrderInfo: async (parent, { orderInfoInput }, { OrderInfo }) => {
       const orderInfo = await new OrderInfo(orderInfoInput).save();
       orderInfo._id = orderInfo._id.toString();
+      
       return orderInfo;
     },
     updateOrderInfo: async (parent, args, { OrderInfo }) => {
