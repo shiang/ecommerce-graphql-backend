@@ -1,6 +1,7 @@
 export default {
   Query: {
-    customer: async (parent, args, { Customer }) => {
+    customer: async (parent, args, { Customer, user }) => {
+      console.log(user);
       const customer = await Customer.findOne({ _id: args._id });
       return customer;
     },

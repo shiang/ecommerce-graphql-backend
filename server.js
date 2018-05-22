@@ -29,7 +29,10 @@ mongoose.connect(process.env.MONGO_URL);
 
 // Initialize the app
 const app = express();
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000'
+}));
 
 const addUser = async (req, res) => {
   const token = req.headers.authorization;
@@ -46,39 +49,44 @@ const addUser = async (req, res) => {
 //app.use(cors('*'));
 app.use(addUser);
 
-// The GraphQL endpoint
-app.use(
-  "/graphql",
-  bodyParser.json(),
-  graphqlExpress(req => ({
-    schema,
-    context: {
-      User,
-      Picture,
-      Product,
-      Customer,
-      Vendor,
-      Order,
-      OrderInfo,
-      Chatroom,
-      Message,
-      SECRET: process.env.LOGIN_SECRET,
-      user: req.user
+//Passport google-oauth
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+      callbackURL: "https://60ec4565.ngrok.io/auth/google/callback"
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      // console.log("token: ", accessToken);
+      // console.log("profile: ", profile);
+
+      const existingUser = await User.findOne({ googleId: profile.id });
+
+      if (existingUser) {
+        done(null, existingUser);
+      } else {
+        
+        const user = await new User({ googleId: profile.id }).save();
+        const customer = await new Customer({
+          user: user._id,
+          name: profile.name.givenName
+        }).save();
+
+        user.set({ customer: customer._id }).save();
+
+        done(null, user);
+      }
     }
-  }))
+  )
 );
 
-// GraphiQL, a visual editor for queries
-app.use(
-  "/graphiql",
-  graphiqlExpress({
-    endpointURL: "/graphql",
-    subscriptionsEndpoint: "ws://localhost:4000/subscriptions"
-  })
-);
+
 
 app.use(
   cookieSession({
+    name: 'session',
     maxAge: 30 * 24 * 60 * 60 * 1000,
     keys: [process.env.SESSION_KEY]
   })
@@ -98,35 +106,40 @@ passport.deserializeUser((id, done) => {
 });
 
 
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-      callbackURL: "https://ur-shop-graphql-03.now.sh/auth/google/callback"
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      // console.log("token: ", accessToken);
-      // console.log("profile: ", profile);
-
-      const existingUser = await User.findOne({ googleId: profile.id });
-
-      if (existingUser) {
-        done(null, existingUser);
-      } else {
-        const user = await new User({ googleId: profile.id }).save();
-        const customer = await new Customer({
-          user: user._id,
-          name: profile.name.givenName
-        }).save();
-
-        user.set({ customer: customer._id }).save();
-
-        done(null, user);
-      }
+// The GraphQL endpoint
+app.use(
+  "/graphql",
+  bodyParser.json(),
+  (req, _, next) => {
+    console.log("REQ: ", req.user);
+    return next()
+  },
+  graphqlExpress((req, res) => ({
+    schema,
+    context: {
+      User,
+      Picture,
+      Product,
+      Customer,
+      Vendor,
+      Order,
+      OrderInfo,
+      Chatroom,
+      Message,
+      SECRET: process.env.LOGIN_SECRET,
+      user: req.user,
+      //session: req.session
     }
-  )
+  }))
+);
+
+// GraphiQL, a visual editor for queries
+app.use(
+  "/graphiql",
+  graphiqlExpress({
+    endpointURL: "/graphql",
+    subscriptionsEndpoint: "ws://localhost:4000/subscriptions"
+  })
 );
 
 app.get(
@@ -140,19 +153,22 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google"),
   (req, res) => {
-    console.log(req);
-    res.redirect("https://ur-shop-client.now.sh/");
+    //res.redirect("https://ur-shop-client.now.sh/");
+    res.redirect("/");
   }
 );
 
 app.get("/logout", (req, res) => {
   req.logout();
-  res.send(req.user);
+  //res.redirect("https://ur-shop-client.now.sh/");
+  res.redirect("/");
 });
 
 app.get("/current_user", (req, res) => {
-  res.send(req.user);
+  console.log("CHECK_USER: ", req.user)
+  res.send(JSON.stringify(req.user));
 });
+
 
 const server = createServer(app);
 
