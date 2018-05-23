@@ -9,10 +9,7 @@ export default {
     },
     allProducts: async (parent, args, { Product }) => {
       const products = await Product.find();
-      return products.map(product => {
-        product._id = product._id.toString();
-        return product;
-      });
+      return products;
     }
   },
   Mutation: {

@@ -147,8 +147,8 @@ input ProductInput {
   tags: [String!]
   category: String!
   images: [String!]
-  vendor: String,
-  customer: String,
+  vendor: String
+  customer: String
   product: String
 } 
 

@@ -31,7 +31,8 @@ mongoose.connect(process.env.MONGO_URL);
 const app = express();
 app.use(cors({
   credentials: true,
-  origin: 'https://ur-shop-graphql-client.now.sh'
+  //origin: 'https://ur-shop-graphql-client.now.sh'
+  origin: 'http://localhost:3000'
 }));
 
 const addUser = async (req, res) => {
@@ -137,7 +138,8 @@ app.use(
   "/graphiql",
   graphiqlExpress({
     endpointURL: "/graphql",
-    subscriptionsEndpoint: "wss://ur-shop-graphql-server.now.sh/subscriptions"
+    //subscriptionsEndpoint: "wss://ur-shop-graphql-server.now.sh/subscriptions"
+    subscriptionsEndpoint: "ws://localhost:4000/subscriptions"
   })
 );
 
